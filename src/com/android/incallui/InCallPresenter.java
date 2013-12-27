@@ -20,12 +20,9 @@
 
 package com.android.incallui;
 
-<<<<<<< HEAD
-=======
-import android.telephony.MSimTelephonyManager;
 
+import android.telephony.MSimTelephonyManager;
 import com.android.incallui.service.PhoneNumberService;
->>>>>>> 48cdd91... DSDA: Add InCallUI DSDA support.
 import com.google.android.collect.Sets;
 import com.google.common.base.Preconditions;
 
