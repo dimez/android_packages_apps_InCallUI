@@ -25,11 +25,7 @@
         android:focusable="true"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-<<<<<<< HEAD
-        android:background="@color/incall_call_glowpad_background"
-=======
         android:background="@color/incall_call_banner_background"
->>>>>>> cc2bf63... Phone: Add transparency to incall screen
         android:visibility="gone"
 
         dc:targetDrawables="@array/incoming_call_widget_3way_targets"
