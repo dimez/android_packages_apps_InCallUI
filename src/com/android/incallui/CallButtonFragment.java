@@ -55,7 +55,10 @@ public class CallButtonFragment
     private ImageButton mAddCallButton;
     private ImageButton mSwapButton;
     private ImageButton mBlacklistButton;
+<<<<<<< HEAD
     private ImageButton mAddParticipantButton;
+=======
+>>>>>>> 658cb2c... InCallUI: Port "Add to blacklist" support to in-call ui (1 of 2)
 
     private PopupMenu mAudioModePopup;
     private boolean mAudioModePopupVisible;
@@ -166,6 +169,15 @@ public class CallButtonFragment
         mModifyCallButton = (Button) parent.findViewById(R.id.modifyCallButton);
         mModifyCallButton.setOnClickListener(this);
 
+        // "Add to black list" button
+        mBlacklistButton = (ImageButton) parent.findViewById(R.id.addBlacklistButton);
+        if (BlacklistUtils.isBlacklistEnabled(getActivity())) {
+            mBlacklistButton.setVisibility(View.VISIBLE);
+            mBlacklistButton.setOnClickListener(this);
+        } else {
+            mBlacklistButton.setVisibility(View.GONE);
+        }
+
         return parent;
     }
 
@@ -210,12 +222,15 @@ public class CallButtonFragment
             case R.id.addBlacklistButton:
                 getPresenter().blacklistClicked(getActivity());
                 break;
+<<<<<<< HEAD
             case R.id.addParticipant:
                 getPresenter().addParticipantClicked();
                 break;
             case R.id.modifyCallButton:
                 getPresenter().modifyCallButtonClicked();
                 break;
+=======
+>>>>>>> 658cb2c... InCallUI: Port "Add to blacklist" support to in-call ui (1 of 2)
             default:
                 Log.wtf(this, "onClick: unexpected");
                 break;
@@ -238,7 +253,10 @@ public class CallButtonFragment
         mAddCallButton.setEnabled(isEnabled);
         mSwapButton.setEnabled(isEnabled);
         mBlacklistButton.setEnabled(isEnabled);
+<<<<<<< HEAD
         mAddParticipantButton.setEnabled(isEnabled);
+=======
+>>>>>>> 658cb2c... InCallUI: Port "Add to blacklist" support to in-call ui (1 of 2)
     }
 
     @Override

@@ -309,6 +309,7 @@ public class CallCommandClient {
             Log.e(this, "Error on blacklistAndHangup().", e);
         }
     }
+<<<<<<< HEAD
 
     public void setActiveSubscription(int subscriptionId) {
         Log.i(this, "set active sub = " + subscriptionId);
@@ -338,4 +339,6 @@ public class CallCommandClient {
         Log.i(this, "get active sub " + subscriptionId);
         return subscriptionId;
     }
+=======
+>>>>>>> 658cb2c... InCallUI: Port "Add to blacklist" support to in-call ui (1 of 2)
 }
