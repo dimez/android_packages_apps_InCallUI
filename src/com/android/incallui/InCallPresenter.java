@@ -21,12 +21,9 @@ import com.google.common.base.Preconditions;
 
 import android.content.Context;
 import android.content.Intent;
-<<<<<<< HEAD
 import android.provider.Settings;
 import android.os.PowerManager;
-=======
 import android.content.ActivityNotFoundException;
->>>>>>> d4945cf... IMS support for UI interface
 
 import com.android.services.telephony.common.Call;
 import com.android.services.telephony.common.Call.Capabilities;
