@@ -197,7 +197,7 @@ public class MediaHandler extends Handler {
     /**
      * Get Negotiated Height
      */
-    public synchronized static int getNegotiatedHeight() {
+    public static int getNegotiatedHeight() {
         Log.d(TAG, "Negotiated Height = " + mNegotiatedHeight);
         return mNegotiatedHeight;
     }
@@ -205,7 +205,7 @@ public class MediaHandler extends Handler {
     /**
      * Get Negotiated Width
      */
-    public synchronized static int getNegotiatedWidth() {
+    public static int getNegotiatedWidth() {
         Log.d(TAG, "Negotiated Width = " + mNegotiatedWidth);
         return mNegotiatedWidth;
     }
@@ -218,7 +218,7 @@ public class MediaHandler extends Handler {
         return mUIOrientationMode;
     }
 
-    public synchronized static short getNegotiatedFps() {
+    public static short getNegotiatedFps() {
         return mNegotiatedFps;
     }
 
@@ -243,7 +243,10 @@ public class MediaHandler extends Handler {
         switch (eventId) {
             case PARAM_READY_EVT:
                 Log.d(TAG, "Received PARAM_READY_EVT. Updating negotiated values");
-                if (updatePreviewParams() && mMediaEventListener != null) {
+                mNegotiatedHeight = nativeGetNegotiatedHeight();
+                mNegotiatedWidth = nativeGetNegotiatedWidth();
+                mNegotiatedFps = nativeGetNegotiatedFPS();
+                if (mMediaEventListener != null) {
                     mMediaEventListener.onParamReadyEvent();
                 }
                 break;
@@ -264,21 +267,6 @@ public class MediaHandler extends Handler {
                 Log.e(TAG, "Received unknown event id=" + eventId);
         }
 
-    }
-
-    private synchronized boolean updatePreviewParams() {
-        int h = nativeGetNegotiatedHeight();
-        int w = nativeGetNegotiatedWidth();
-        short fps = nativeGetNegotiatedFPS();
-        if (mNegotiatedHeight != h
-                || mNegotiatedWidth != w
-                || mNegotiatedFps != fps) {
-            mNegotiatedHeight = h;
-            mNegotiatedWidth = w;
-            mNegotiatedFps = fps;
-            return true;
-        }
-        return false;
     }
 
     private void processUIOrientationMode() {
