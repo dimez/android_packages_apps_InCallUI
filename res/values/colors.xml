@@ -24,6 +24,7 @@
     <color name="incall_call_banner_text_color">#FFFFFF</color> <!-- white -->
     <color name="incall_button_background">#2A2A2A</color>
     <color name="incall_call_glowpad_background">#40000000</color> <!-- semitransparent black -->
+
     <!-- DTMF Dialer -->
     <color name="dtmf_dialer_display_text">#FFFFFF</color> <!-- white -->
 
@@ -50,7 +51,7 @@
 
     <!-- Button background -->
     <color name="button_background">#000000</color>
-
+	
 	<!-- Colors from card_call_incoming in layout -->
     <color name="card_call_incoming_contact_name">#FF333333</color>
 	<color name="card_call_incoming_separator">#FF888888</color>
