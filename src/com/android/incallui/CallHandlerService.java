@@ -48,7 +48,6 @@ public class CallHandlerService extends Service {
     private static final int ON_POST_CHAR_WAIT = 8;
     private static final int ON_START = 9;
     private static final int ON_DESTROY = 10;
-    private static final int ON_ACTIVE_SUB_CHANGE = 11;
 
     private static final int LARGEST_MSG_ID = ON_DESTROY;
 
@@ -185,12 +184,6 @@ public class CallHandlerService extends Service {
             mMainHandler.sendMessage(mMainHandler.obtainMessage(ON_POST_CHAR_WAIT, callId, 0,
                     chars));
         }
-
-        @Override
-        public void onActiveSubChanged(int activeSub) {
-            mMainHandler.sendMessage(mMainHandler.obtainMessage(ON_ACTIVE_SUB_CHANGE, activeSub));
-        }
-
     };
 
     private void doStart(ICallCommandService service) {
@@ -309,11 +302,6 @@ public class CallHandlerService extends Service {
             case ON_DESTROY:
                 doStop();
                 break;
-            case ON_ACTIVE_SUB_CHANGE:
-                Log.i(TAG, "ON_ACTIVE_SUB_CHANGE: " + msg.obj);
-                mCallList.onActiveSubChanged((Integer) msg.obj);
-                break;
-
             default:
                 break;
         }
