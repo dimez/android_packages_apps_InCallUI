@@ -259,14 +259,14 @@ public class CallCommandClient {
         }
     }
 
-    public void modifyCallInitiate(int callId, int callType) {
+    public void modifyCallInitiate(int callId) {
         if (mCommandService == null) {
             Log.e(this, "Cannot modifyCall(); CallCommandService == null");
             return;
         }
         try {
-            Log.v(this, "modifyCall(), callId=" + callId + " callType=" + callType);
-            mCommandService.modifyCallInitiate(callId, callType);
+            Log.v(this, "modifyCall() ");
+            mCommandService.modifyCallInitiate(callId);
         } catch (RemoteException e) {
             Log.e(this, "Error on modifyCall().");
         }

@@ -51,17 +51,10 @@ public class CallUtils {
     }
 
     public static boolean hasCallModifyFailed(Call call) {
-        final CallDetails modifyCallDetails = getCallModifyDetails(call);
-        boolean hasError = false;
-        try {
-            if (modifyCallDetails != null && modifyCallDetails.getErrorInfo() != null) {
-                hasError = !modifyCallDetails.getErrorInfo().isEmpty()
-                        && Integer.parseInt(modifyCallDetails.getErrorInfo()) != 0;
-            }
-        } catch (Exception e) {
-            hasError = true;
-        }
-        return hasError;
+        final CallDetails cd = getCallModifyDetails(call);
+        return cd != null && cd.getErrorInfo() != null
+                && (Integer.parseInt(cd.getErrorInfo()) == 0);
+
     }
 
     private static CallDetails getCallDetails(Call call) {
