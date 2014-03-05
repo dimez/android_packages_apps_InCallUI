@@ -31,10 +31,13 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.provider.Settings;
 import android.os.PowerManager;
+<<<<<<< HEAD
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.view.IWindowManager;
 import android.content.ActivityNotFoundException;
+=======
+>>>>>>> parent of c7bfec6... InCallUI: Incoming Call in Background (1/3)
 
 import com.android.services.telephony.common.Call;
 import com.android.services.telephony.common.Call.Capabilities;
@@ -71,6 +74,7 @@ public class InCallPresenter implements CallList.Listener {
     private AccelerometerListener mAccelerometerListener;
     private ProximitySensor mProximitySensor;
     private boolean mServiceConnected = false;
+<<<<<<< HEAD
     private boolean mCallUiInBackground = false;
     private static String LOG_TAG = "InCallPresenter";
 
@@ -97,6 +101,8 @@ public class InCallPresenter implements CallList.Listener {
                                           {0, 0, 1, 1},
                                           {0, 1, 0, 1},
                                           {0, 0, 0, 0}};
+=======
+>>>>>>> parent of c7bfec6... InCallUI: Incoming Call in Background (1/3)
 
     /**
      * Is true when the activity has been previously started. Some code needs to know not just if
@@ -403,11 +409,16 @@ public class InCallPresenter implements CallList.Listener {
         mInCallState = newState;
 
         // Disable notification shade and soft navigation buttons
+<<<<<<< HEAD
         // on new incoming call as long it is no background call
         if (newState.isIncoming()) {
             if (!mCallUiInBackground) {
                 CallCommandClient.getInstance().setSystemBarNavigationEnabled(false);
             }
+=======
+        if (newState.isIncoming()) {
+            CallCommandClient.getInstance().setSystemBarNavigationEnabled(false);
+>>>>>>> parent of c7bfec6... InCallUI: Incoming Call in Background (1/3)
             if (mAccelerometerListener != null) {
                 mAccelerometerListener.enableSensor(true);
             }
@@ -802,24 +813,6 @@ public class InCallPresenter implements CallList.Listener {
             mInCallActivity = null;
         }
 
-        // check if the user want to have the call UI in background and set it up
-        mCallUiInBackground = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.CALL_UI_IN_BACKGROUND, 0) == 1;
-
-        if (mCallUiInBackground) {
-            // get power service to check later if screen is on
-            final PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
-            // check if keyguard is currently shown
-            final IWindowManager windowManagerService = IWindowManager.Stub.asInterface(
-                    ServiceManager.getService(Context.WINDOW_SERVICE));
-            boolean isKeyguardShowing = false;
-            try {
-                isKeyguardShowing = windowManagerService.isKeyguardLocked();
-            } catch (RemoteException e) {
-            }
-            mCallUiInBackground = pm.isScreenOn() && !isKeyguardShowing;
-        }
-
         boolean nonIntrusiveDisabled = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.NON_INTRUSIVE_INCALL, 1) == 0;
 
@@ -830,7 +823,7 @@ public class InCallPresenter implements CallList.Listener {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
         } else {
-            mStatusBarNotifier.updateNotificationAndLaunchIncomingCallUi(inCallState, mCallList, mCallUiInBackground);
+            mStatusBarNotifier.updateNotificationAndLaunchIncomingCallUi(inCallState, mCallList);
         }
     }
 
@@ -850,7 +843,7 @@ public class InCallPresenter implements CallList.Listener {
      * Starts the incoming call Ui immediately, bypassing the card UI
      */
     public void startIncomingCallUi(InCallState inCallState) {
-        mStatusBarNotifier.updateNotificationAndLaunchIncomingCallUi(inCallState, mCallList, mCallUiInBackground);
+        mStatusBarNotifier.updateNotificationAndLaunchIncomingCallUi(inCallState, mCallList);
     }
 
     /**

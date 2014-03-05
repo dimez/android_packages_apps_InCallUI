@@ -95,7 +95,6 @@ public class StatusBarNotifier implements InCallPresenter.InCallStateListener {
     private int mSavedContent = 0;
     private Bitmap mSavedLargeIcon;
     private String mSavedContentTitle;
-    private boolean mIsCallUiInBackground;
 
     public StatusBarNotifier(Context context, ContactInfoCache contactInfoCache) {
         Preconditions.checkNotNull(context);
@@ -162,10 +161,14 @@ public class StatusBarNotifier implements InCallPresenter.InCallStateListener {
      *
      * @see #updateInCallNotification(boolean,InCallState,CallList)
      */
+<<<<<<< HEAD
   public void updateNotificationAndLaunchIncomingCallUi(
             InCallState state, CallList callList, boolean isCallUiInBackground) {
         // If the user want to have the UI in background set it no matter what
         mIsCallUiInBackground = isCallUiInBackground;
+=======
+    public void updateNotificationAndLaunchIncomingCallUi(InCallState state, CallList callList) {
+>>>>>>> parent of c7bfec6... InCallUI: Incoming Call in Background (1/3)
         // Set allowFullScreenIntent=true to indicate that we *should*
         // launch the incoming call UI if necessary.
         updateInCallNotification(true, state, callList);
@@ -532,7 +535,6 @@ public class StatusBarNotifier implements InCallPresenter.InCallStateListener {
      */
     private void configureFullScreenIntent(Notification.Builder builder, PendingIntent intent,
             Call call) {
-        if (!mIsCallUiInBackground) {
         // Ok, we actually want to launch the incoming call
         // UI at this point (in addition to simply posting a notification
         // to the status bar).  Setting fullScreenIntent will cause
@@ -540,11 +542,6 @@ public class StatusBarNotifier implements InCallPresenter.InCallStateListener {
         // current foreground activity is marked as "immersive".
         Log.d(this, "- Setting fullScreenIntent: " + intent);
         builder.setFullScreenIntent(intent, true);
-        } else {
-            // We do not want to launch the incoming call UI so go ahead and just
-            // show the notification
-            Log.d(this, "- Skip fullScreenIntent due user setting");
-        }
 
         // Ugly hack alert:
         //
