@@ -200,10 +200,10 @@ public class CallCardPresenter extends Presenter<CallCardPresenter.CallCardUi>
             final boolean bluetoothOn =
                     (AudioModeProvider.getInstance().getAudioMode() == AudioMode.BLUETOOTH);
             ui.setCallState(mPrimary.getState(), mPrimary.getDisconnectCause(), bluetoothOn,
-                    getGatewayLabel(), getGatewayNumber(), mPrimary.isHeldRemotely(), callType);
+                    getGatewayLabel(), getGatewayNumber(), mPrimary.isHeldRemotely(), calltype);
         } else {
             ui.setCallState(Call.State.IDLE, Call.DisconnectCause.UNKNOWN,
-                    false, null, null, false, callType);
+                    false, null, null, false, calltype);
         }
     }
 
