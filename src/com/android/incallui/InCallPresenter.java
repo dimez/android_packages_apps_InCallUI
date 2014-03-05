@@ -29,8 +29,11 @@ import com.google.common.base.Preconditions;
 import android.content.Context;
 import android.content.ContentResolver;
 import android.content.Intent;
+<<<<<<< HEAD
 import android.content.ActivityNotFoundException;
+=======
 import android.provider.Settings;
+>>>>>>> e6b4d7b... [3/3] InCallUI: allow disabling non intrusive incall ui
 import android.os.PowerManager;
 
 import com.android.services.telephony.common.Call;
