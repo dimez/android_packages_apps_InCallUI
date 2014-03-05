@@ -28,17 +28,20 @@
 
 package com.android.incallui;
 
-import java.io.IOException;
-
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
+import android.hardware.Camera.Parameters;
+import android.hardware.Camera.Size;
 import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.WindowManager;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * The class is used to hold an {@code android.hardware.Camera} instance.
@@ -47,25 +50,21 @@ import android.view.WindowManager;
  * {@code android.hardware.Camera}.
  */
 
-public class CameraHandler {
+public class CameraHandler implements Camera.PreviewCallback{
     public static final int CAMERA_UNKNOWN = -1;
     private static final String TAG = "VideoCallCameraHandler";
     private static final boolean DBG = true;
-    private ImsCamera mCameraDevice;
+    private android.hardware.Camera mCameraDevice;
     private int mNumberOfCameras;
     private int mCameraId = CAMERA_UNKNOWN; // current camera id
     private int mBackCameraId = CAMERA_UNKNOWN, mFrontCameraId = CAMERA_UNKNOWN;
     private CameraInfo[] mInfo;
     private CameraState mCameraState = CameraState.CAMERA_CLOSED;
+    private Parameters mParameters;
     private Context mContext;
 
     // Use a singleton.
     private static CameraHandler mInstance;
-
-    // Check if device policy has disabled the camera.
-    private DevicePolicyManager mDpm;
-    // Get display rotation
-    WindowManager mWindowManager;
 
     /**
      * Enum that defines the various camera states
@@ -110,11 +109,6 @@ public class CameraHandler {
                 log("Front camera ID is: " + mFrontCameraId);
             }
         }
-        mDpm = (DevicePolicyManager) mContext.getSystemService(
-                Context.DEVICE_POLICY_SERVICE);
-        // Get display rotation
-        mWindowManager = (WindowManager) mContext.getSystemService(
-                Context.WINDOW_SERVICE);
     }
 
     /**
@@ -135,11 +129,14 @@ public class CameraHandler {
      */
     public synchronized boolean open(int cameraId)
             throws Exception {
-        if (mDpm == null) {
+        // Check if device policy has disabled the camera.
+        DevicePolicyManager dpm = (DevicePolicyManager) mContext.getSystemService(
+                Context.DEVICE_POLICY_SERVICE);
+        if (dpm == null) {
             throw new Exception("DevicePolicyManager not available");
         }
 
-        if (mDpm.getCameraDisabled(null)) {
+        if (dpm.getCameraDisabled(null)) {
             throw new Exception("Camera is disabled");
         }
 
@@ -151,12 +148,21 @@ public class CameraHandler {
         if (mCameraDevice == null) {
             try {
                 if (DBG) log("opening camera " + cameraId);
-                mCameraDevice = ImsCamera.open(cameraId);
+                mCameraDevice = android.hardware.Camera.open(cameraId);
                 mCameraId = cameraId;
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 loge("fail to connect Camera" + e);
-                throw e;
+                throw new Exception(e);
             }
+            mParameters = mCameraDevice.getParameters();
+        } else {
+            try {
+                mCameraDevice.reconnect();
+            } catch (IOException e) {
+                loge("reconnect failed.");
+                throw new Exception(e);
+            }
+            setCameraParameters(mParameters);
         }
         mCameraState = CameraState.PREVIEW_STOPPED;
         return true;
@@ -180,6 +186,9 @@ public class CameraHandler {
             // Set the SurfaceTexture to be used for preview
             mCameraDevice.setPreviewTexture(mSurfaceTexture);
 
+            // Set the Preview Call Back to show the camera frames on UI
+            mCameraDevice.setPreviewCallback(this);
+
             setDisplayOrientation();
             mCameraDevice.startPreview();
             mCameraState = CameraState.PREVIEW_STARTED;
@@ -198,12 +207,11 @@ public class CameraHandler {
 
         if (mCameraDevice != null) {
             if (DBG) log("closing camera");
-            if (mCameraState == CameraState.PREVIEW_STARTED) {
-                mCameraDevice.stopPreview();
-            }
+            mCameraDevice.stopPreview(); // Stop preview
             mCameraDevice.release();
         }
         mCameraDevice = null;
+        mParameters = null;
         mCameraId = CAMERA_UNKNOWN;
         mCameraState = CameraState.CAMERA_CLOSED;
     }
@@ -220,21 +228,37 @@ public class CameraHandler {
         }
         if (mCameraDevice != null) {
             if (DBG) log("stopping preview");
+            mCameraDevice.setPreviewCallback(null);
             mCameraDevice.stopPreview();
         }
         mCameraState = CameraState.PREVIEW_STOPPED;
     }
 
-    public void startCameraRecording() {
-        if (mCameraDevice != null && mCameraState == CameraState.PREVIEW_STARTED) {
-            mCameraDevice.startRecording();
+    /**
+     * Return the camera parameters that specifies the current settings of the
+     * camera
+     *
+     * @return camera parameters
+     */
+    public Parameters getCameraParameters() {
+        if (mCameraDevice == null) {
+            return null;
         }
+        return mParameters;
     }
 
-    public void stopCameraRecording() {
-        if (mCameraDevice != null) {
-            mCameraDevice.stopRecording();
+    /**
+     * Set the camera parameters
+     *
+     * @param parameters to be set
+     */
+    public void setCameraParameters(Parameters parameters) {
+        log("setCameraParameters mCameraDevice=" + mCameraDevice + "parameters =" + parameters);
+        if (mCameraDevice == null || parameters == null) {
+            return;
         }
+        mParameters = parameters;
+        mCameraDevice.setParameters(parameters);
     }
 
     /**
@@ -272,8 +296,11 @@ public class CameraHandler {
     public void setDisplay(SurfaceTexture surfaceTexture) {
         // Set the SurfaceTexture to be used for preview
         if (mCameraDevice == null) return;
-        mCameraDevice.setPreviewTexture(surfaceTexture);
-
+        try {
+            mCameraDevice.setPreviewTexture(surfaceTexture);
+        } catch (IOException e) {
+            throw new RuntimeException("setPreviewDisplay failed", e);
+        }
     }
 
     /**
@@ -282,7 +309,24 @@ public class CameraHandler {
      * @param textureView
      */
     public void setDisplay(TextureView textureView) {
-        setDisplay(textureView.getSurfaceTexture());
+        // Set the SurfaceTexture to be used for preview
+        if (mCameraDevice == null) return;
+        try {
+            mCameraDevice.setPreviewTexture(textureView.getSurfaceTexture());
+        } catch (IOException e) {
+            throw new RuntimeException("setPreviewDisplay failed", e);
+        }
+    }
+
+    /**
+     * Gets the supported preview sizes.
+     *
+     * @return a list of Size object. This method will always return a list
+     *         with at least one element.
+     */
+    public List<Size> getSupportedPreviewSizes() {
+        if (mCameraDevice == null) return null;
+        return mCameraDevice.getParameters().getSupportedPreviewSizes();
     }
 
     /**
@@ -311,12 +355,15 @@ public class CameraHandler {
         int degrees = 0;
         int rotation = 0;
 
-        if (mWindowManager == null) {
+        // Get display rotation
+        WindowManager wm = (WindowManager) mContext.getSystemService(
+                Context.WINDOW_SERVICE);
+        if (wm == null) {
             loge("WindowManager not available");
             return;
         }
 
-        rotation = mWindowManager.getDefaultDisplay().getRotation();
+        rotation = wm.getDefaultDisplay().getRotation();
         switch (rotation) {
             case Surface.ROTATION_0: degrees = 0; break;
             case Surface.ROTATION_90: degrees = 90; break;
@@ -336,8 +383,14 @@ public class CameraHandler {
         mCameraDevice.setDisplayOrientation(result);
     }
 
-    public ImsCamera getImsCameraInstance() {
-        return mCameraDevice;
+    /**
+     * Called as preview frames are displayed. The frames are passed to IMS DPL
+     * layer to be sent to the far end device
+     */
+    public void onPreviewFrame(byte[] data, Camera camera) {
+        if (MediaHandler.canSendPreview()) {
+            MediaHandler.sendPreviewFrame(data);
+        }
     }
 
     private void log(String msg) {

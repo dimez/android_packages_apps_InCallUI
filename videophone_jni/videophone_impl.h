@@ -39,7 +39,6 @@ typedef void (*VtImplRegisterCbFun)(IMS_EVENT_NOTIFY_CALLBACK);
 typedef int16_t (*VtImplInitFun)(void);
 typedef int16_t (*VtImplFrameFun)(uint16_t *, uint32_t);
 typedef int16_t (*VtImplSetSurfFun)(JNIEnv *, jobject);
-typedef void (*VtImplSetDeviceOrient)(uint32_t);
 typedef int16_t (*VtImplDeinitFun)(void);
 typedef uint32_t (*VtImplUint32VoidFunc)(void);
 
@@ -48,12 +47,10 @@ struct VtImplApis {
     VtImplInitFun initImsThinClient;
     VtImplFrameFun frameToEncode;
     VtImplSetSurfFun setFarEndSurface;
-    VtImplSetDeviceOrient setDeviceOrientation;
     VtImplDeinitFun deInitImsThinClient;
     VtImplUint32VoidFunc getNegotiatedFPS;
     VtImplUint32VoidFunc getNegotiatedHeight;
     VtImplUint32VoidFunc getNegotiatedWidth;
-    VtImplUint32VoidFunc getUIOrientationMode;
 };
 
 #endif
