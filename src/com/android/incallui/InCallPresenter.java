@@ -28,8 +28,11 @@ import com.google.common.base.Preconditions;
 
 import android.content.Context;
 import android.content.Intent;
+<<<<<<< HEAD
 import android.content.ActivityNotFoundException;
+=======
 import android.os.PowerManager;
+>>>>>>> 4190c56... [1/2] InCall: Add a non-intrusive dialog for incoming calls
 
 import com.android.services.telephony.common.Call;
 import com.android.services.telephony.common.Call.Capabilities;
