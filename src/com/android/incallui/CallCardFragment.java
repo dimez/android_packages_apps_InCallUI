@@ -227,9 +227,7 @@ public class CallCardFragment extends BaseFragment<CallCardPresenter, CallCardPr
         showCallTypeLabel(isSipCall, isForwarded);
 
 
-        if (MSimTelephonyManager.getDefault().isMultiSimEnabled() &&
-                !(MSimTelephonyManager.getDefault().getMultiSimConfiguration()
-                == MSimTelephonyManager.MultiSimVariants.DSDA)) {
+        if (MSimTelephonyManager.getDefault().isMultiSimEnabled()) {
             String[] sub = {"SUB 1", "SUB 2", "SUB 3"};
             int subscription = getPresenter().getActiveSubscription();
 
