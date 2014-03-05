@@ -314,6 +314,7 @@ public class VideoCallPanel extends RelativeLayout implements TextureView.Surfac
      */
     private void startPreviewAndRecording() {
         try {
+            mCameraPreview.setVisibility(View.VISIBLE);
             mVideoCallManager.startCameraPreview(mCameraSurface);
             mVideoCallManager.startCameraRecording();
         } catch (IOException ioe) {
@@ -326,6 +327,7 @@ public class VideoCallPanel extends RelativeLayout implements TextureView.Surfac
      * This method stops the camera recording and preview
      */
     private void stopRecordingAndPreview() {
+        mCameraPreview.setVisibility(View.INVISIBLE);
         mVideoCallManager.stopCameraRecording();
         mVideoCallManager.stopCameraPreview();
     }
@@ -568,10 +570,6 @@ public class VideoCallPanel extends RelativeLayout implements TextureView.Surfac
             stopRecordingAndPreview();
             closeCamera();
         }
-
-        log("VideoCall: switchCamera: IsCameraNeeded=" + mCameraNeeded + " cameraId=" + cameraId);
-        final boolean showCameraPreview = mCameraNeeded && cameraId != CAMERA_UNKNOWN;
-        mCameraPreview.setVisibility(showCameraPreview ? TextureView.VISIBLE : TextureView.GONE);
 
         // Restart camera if camera doesn't need to stay off
         if (isCameraInitNeeded()) {
