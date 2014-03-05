@@ -181,6 +181,7 @@
 
         <!-- Separator between 5th (or 6th) button and right padding -->
         <View style="@style/VerticalSeparator" />
+<<<<<<< HEAD
 
         <ImageButton
             android:id="@+id/addParticipant"
@@ -200,6 +201,8 @@
 
         <!-- Separator between 4th (or 5th) button and right padding -->
         <View style="@style/VerticalSeparator" />
+=======
+>>>>>>> 658cb2c... InCallUI: Port "Add to blacklist" support to in-call ui (1 of 2)
 
     </LinearLayout>
 
